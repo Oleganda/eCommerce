@@ -27,10 +27,10 @@ require_once(ROOT_PATH . '/autoload.php'); ?>
                         <a class="nav-link active" href="register.php">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="products.php">Products</a>
+                        <a class="nav-link" href="productpage.php">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="blog.php">Blog</a>
+                        <a class="nav-link" href="addproduct.php">Add Product</a>
                     </li>
                 </ul>
 

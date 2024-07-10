@@ -1,52 +1,68 @@
 <?php
+// session_start();
+
 define("ROOT_PATH", dirname(__DIR__));
 require_once(ROOT_PATH . '/autoload.php');
 require_once(ROOT_PATH . '/models/authModel.php');
 
-
 if (isset($_POST['register'])) {
     $errors = [];
     $fname = trim($_POST['fname']);
-    $lname = $_POST['lname'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $password = $_POST['password'];
-
+    $lname = trim($_POST['lname']);
+    $email = trim($_POST['email']);
+    $phone = trim($_POST['phone']);
+    $password = trim($_POST['password']);
 
     if (empty($fname)) {
-        Validation::set_errors('First name cabbot be empty ');
+        $errors[] = 'First name cannot be empty';
     }
 
     if (empty($lname)) {
-        Validation::set_errors('Last name cannot be empty ');
+        $errors[] = 'Last name cannot be empty';
     }
 
     if (empty($phone)) {
-        Validation::set_errors('Phone cannot be empty ');
+        $errors[] = 'Phone cannot be empty';
     }
 
     if (empty($email)) {
-        Validation::set_errors('Email cannot be empty ');
+        $errors[] = 'Email cannot be empty';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        Validation::set_errors('Email cannot be short');
+        $errors[] = 'Invalid email format';
     }
 
-    if (empty($pass)) {
-        Validation::set_errors('Password cannot be empty ');
-    } elseif (strlen($pass) < 8) {
-        Validation::set_errors('Password cannot be short ');
+    if (empty($password)) {
+        $errors[] = 'Password cannot be empty';
+    } elseif (strlen($password) < 8) {
+        $errors[] = 'Password must be at least 8 characters long';
     }
 
     // Save errors to session
-    // Validation::set_errors($errors);
+    if (!empty($errors)) {
+        Validation::set_errors($errors);
+    }
 
-    if (empty(Validation::is_errors())) {
-        Validation::set_value($_POST);
+    // If there are no errors, proceed with registration
+    if (!Validation::is_errors()) {
+        $authModel = new AuthModel();
+        $authModel->register($fname, $lname, $email, $phone, $password);
+
+        // Set the values in session to keep the form filled in case of an error
+        Validation::set_value('fname', $fname);
+        Validation::set_value('lname', $lname);
+        Validation::set_value('email', $email);
+        Validation::set_value('phone', $phone);
+
         header("Location: ../register.php");
         echo "<script>alert('Registration successful!');</script>";
     } else {
-        $authModel = new AuthModel();
-        $authModel->register($fname, $lname, $email, $phone, $pass);
+        // Set the values in session to keep the form filled in case of an error
+        Validation::set_value('fname', $fname);
+        Validation::set_value('lname', $lname);
+        Validation::set_value('email', $email);
+        Validation::set_value('phone', $phone);
+
         header("Location: ../register.php");
+        exit();
     }
 }
