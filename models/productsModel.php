@@ -24,4 +24,11 @@ class ProductModel extends DB
         $ps->execute();
         return $this->conn->lastInsertId();
     }
+
+    public function getAllProducts()
+    {
+        $ps = $this->conn->prepare('SELECT * FROM Products');
+        $ps->execute();
+        return $ps->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
